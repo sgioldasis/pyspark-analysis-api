@@ -113,7 +113,7 @@ You can run the program by typing:
 make run
 ```
 
-You will see program output in your console. First the ETL will run and populate the database and then the API server will run. You will see the output `Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)`. You can visit the API endpoints `http://127.0.0.1:5000/kpi1` and `http://127.0.0.1:5000/kpi2` in your browser to see the database contents. You can also apply filters using query parameters (from, to, interval). For example `http://127.0.0.1:5000/kpi1/?from=2017-03-01_10:00:00&to=2017-03-01_10:05:00&interval=5-minute` will give you only the specified range of records.
+You will see program output in your console. First the ETL will run and populate the database and then the API server will run. You will see the output `Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)`. You can visit the API endpoints http://127.0.0.1:5000/kpi1 and http://127.0.0.1:5000/kpi2 in your browser to see the database contents. You can also apply filters using query parameters (from, to, interval). For example http://127.0.0.1:5000/kpi1/?from=2017-03-01_10:00:00&to=2017-03-01_10:05:00&interval=5-minute will give you only the specified range of records.
 
 The server will keep running until you press `Ctrl-C` in which case it will exit. Once the server exits, you can bring down the docker infrastructure by typing:
 
