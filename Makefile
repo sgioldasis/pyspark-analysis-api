@@ -1,18 +1,7 @@
-# The binary to build (just the basename).
-MODULE := stats
-
-# Where to push the docker image.
-REGISTRY ?= sgioldasis
-
-IMAGE := $(REGISTRY)/$(MODULE)
-
-# This version-strategy uses git tags to set the version string
-# TAG := $(shell git describe --tags --always --dirty)
-
 BLUE=\033[0;34m
 NC=\033[0m # No Color
 
-.PHONY: infra-up infra-down install config init-db run test-dep sleep test test-docker docker-test clean
+.PHONY: infra-up infra-ps infra-down install run-batch run-api run test-dep sleep test clean
 
 infra-up:
 	@echo "\n${BLUE}Starting the infrastructure...${NC}\n"
@@ -29,12 +18,6 @@ infra-down:
 install:
 	@pip install -r requirements.txt
 
-config:
-	@cp kafkamysql/config.prod.template.yml kafkamysql/config.prod.yml
-
-init-db:
-	@cd kafkamysql ; python db_init.py prod ; cd ..
-
 run-batch:
 	@python -m etl
 
@@ -50,12 +33,6 @@ sleep:
 test: infra-up sleep test-dep infra-down
 
 run: infra-up sleep run-batch run-api infra-down
-
-test-docker:
-	@sleep 20 ; cd kafkamysql ; python db_init.py docker ; cd .. ; pytest
-
-docker-test:
-	@docker-compose up --build --abort-on-container-exit ; docker-compose down
 
 clean:
 	@echo "\n${BLUE}Cleaning up...${NC}\n"
