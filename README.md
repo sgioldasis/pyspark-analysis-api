@@ -29,7 +29,7 @@ _Note:_ The following instructions are for Ubuntu Linux but should work in any D
 ### Clone this repo
 
 ```bash
-git clone git@github.com:sgioldasis/kafkamysql.git
+git clone git@github.com:sgioldasis/pyspark-analysis-api.git
 cd kafkamysql
 ```
 
