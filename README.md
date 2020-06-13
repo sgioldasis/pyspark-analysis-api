@@ -1,19 +1,30 @@
-# Kafka to MySQL
+# PySpark Analysis (with Flask API)
+
 ![Language](https://img.shields.io/badge/python-v3.6.8-blue)
 ![Author](https://img.shields.io/badge/Made%20By-Savas%20Gioldasis-blue)
 
-This project is a Python implementation of a Kafka consumer that reads JSON messages from a Kafka topic, transforms them to a corresponding relational schema and inserts them into a MySQL table. It also creates a MySQL stored procedure which aggregates the ingestion table into a second (aggregate) table and schedules the stored procedure to run hourly.
+This project is a PySpark implementation of a system for calculating mobile subscriber and network statistics from raw data. The raw data are produced by a 3rd party system and refer to the user activity in 5-minute time periods. They are produced in the form of CSV text files.
+
+The purpose of the application is to calculate user and network KPIs (Key Performance Indicators) for 5-minute and 1-hour intervals and store them in the database. The KPIs to be calculated are the following:
+
+- KPI1: Top 3 services by traffic volume: the top 10 services (as identified by service_id) which generated the largest traffic volume in terms of bytes (downlink_bytes + uplink_bytes) for the interval.
+
+- KPI2: Top 3 cells by number of unique users: the top 10 cells (as identified by cell_id) which served the highest number of unique users (as identified by msisdn) for the interval.
+
+The KPIs above are calculated for all 5-minute intervals within the day, but also for all 1-hour intervals of the day. So, for each 5-minute KPI there are calculations for the intervals: 00:00 – 00:05, 00:05 – 00:10, 00:10-00:15, etc. For each 1-hour KPI, this is done for: 00:00 – 01:00, 01:00 – 02:00 etc. The results are stored in one database table for each KPI.
 
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
-<!--- These are just example requirements. Add, duplicate or remove as required --->
-* A `Linux` machine
-* Git
-* Python 3.6.8 (and above)
-* Docker and docker-compose
 
-*Note:* The following instructions are for Ubuntu Linux but should work in any Debian based Linux.
+<!--- These are just example requirements. Add, duplicate or remove as required --->
+
+- A `Linux` machine
+- Git
+- Python 3.6.8 (and above)
+- Docker and docker-compose
+
+_Note:_ The following instructions are for Ubuntu Linux but should work in any Debian based Linux.
 
 ### Clone this repo
 
@@ -49,6 +60,7 @@ You can find instructions for your system in the links below:
 - [Install Docker Compose](https://docs.docker.com/compose/install/)
 
 ## Initial Setup
+
 It is recommended to first setup and activate a Python 3.6.8 virtualenv. If you use `pyenv` you can type the following inside your main project folder (kafkamysql):
 
 ```shell
@@ -122,7 +134,6 @@ make run
 ```
 
 You will see program output in your console. Also, you might see some files under `logs` folder. File `rejected.txt` will log rejected messages (if any) and file `warnings.txt` will log MySQL warnings (if any). The program will keep running until you press `Ctrl-C` in which case it will exit.
-
 
 ## Blog Posts - More Information About This Repo
 
