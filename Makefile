@@ -1,0 +1,62 @@
+# The binary to build (just the basename).
+MODULE := stats
+
+# Where to push the docker image.
+REGISTRY ?= sgioldasis
+
+IMAGE := $(REGISTRY)/$(MODULE)
+
+# This version-strategy uses git tags to set the version string
+# TAG := $(shell git describe --tags --always --dirty)
+
+BLUE=\033[0;34m
+NC=\033[0m # No Color
+
+.PHONY: infra-up infra-down install config init-db run test-dep sleep test test-docker docker-test clean
+
+infra-up:
+	@echo "\n${BLUE}Starting the infrastructure...${NC}\n"
+	@docker-compose -f docker-compose.infra.yml up -d
+
+infra-ps:
+	@echo "\n${BLUE}Querying the infrastructure...${NC}\n"
+	@docker-compose -f docker-compose.infra.yml ps
+
+infra-down:
+	@echo "\n${BLUE}Stopping the infrastructure...${NC}\n"
+	@docker-compose -f docker-compose.infra.yml down
+
+install:
+	@pip install -r requirements.txt
+
+config:
+	@cp kafkamysql/config.prod.template.yml kafkamysql/config.prod.yml
+
+init-db:
+	@cd kafkamysql ; python db_init.py prod ; cd ..
+
+run-batch:
+	@python -m etl
+
+run-api:
+	@flask run
+
+test-dep:
+	@export FLASK_ENV=development; pytest 
+
+sleep:
+	@sleep 5
+
+test: infra-up sleep test-dep infra-down
+
+run: infra-up sleep run-batch run-api infra-down
+
+test-docker:
+	@sleep 20 ; cd kafkamysql ; python db_init.py docker ; cd .. ; pytest
+
+docker-test:
+	@docker-compose up --build --abort-on-container-exit ; docker-compose down
+
+clean:
+	@echo "\n${BLUE}Cleaning up...${NC}\n"
+	@rm -rf .pytest_cache __pycache__ tests/__pycache__ tests/.pytest_cache etl/__pycache__ etl/.pytest_cache etl/*.pyc .coverage .coverage.* htmlcov

@@ -1,0 +1,9 @@
+INPUT_PATH = "resources/data/input"
+HOST = "127.0.0.1"
+DATABASE = "db"
+PORT = 3306
+USER = "user"
+PASSWORD = "password"
+JDBC_URL = f"jdbc:mysql://localhost:{PORT}/{DATABASE}"
+JDBC_DRIVER = "com.mysql.jdbc.Driver"
+JDBC_JAR = "resources/jar/mysql-connector-java-8.0.19.jar"
