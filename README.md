@@ -17,7 +17,7 @@ The KPIs above are calculated for all 5-minute intervals within the day, but als
 
 In the image below you can see the design of the system on a high level:
 
-![HighLevelSystemDesign](doc/HighLevelSystemDesign.jpg)
+![HighLevelSystemDesign](doc/HighLevelSystemDesign.svg)
 
 ## Prerequisites
 
