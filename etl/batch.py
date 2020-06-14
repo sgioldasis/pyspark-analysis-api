@@ -184,7 +184,7 @@ def write_jdbc(df,
                mode="append"
                ):
     """
-    Writes a dataframe to a JDBC database using the provided parameters
+    Writes a dataframe to a JDBC database table using the provided parameters
     """
     df.write.format("jdbc") \
         .mode(mode) \
