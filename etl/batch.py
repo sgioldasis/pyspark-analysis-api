@@ -8,13 +8,13 @@ from etl.spark import get_spark
 def run_pipeline():
     data = read_csv(config.INPUT_PATH)
     write_jdbc(
-        df=calculate_kpi1(data, "5 minutes", "5-minute"), db_table="kpi1", mode="overwrite")
+        df=calculate_kpi1(data, *config.INTERVAL_5_MINS), db_table="kpi1", mode="overwrite")
     write_jdbc(
-        df=calculate_kpi1(data, "1 hour", "1-hour"), db_table="kpi1", mode="append")
+        df=calculate_kpi1(data, *config.INTERVAL_1_HOUR), db_table="kpi1", mode="append")
     write_jdbc(
-        df=calculate_kpi2(data, "5 minutes", "5-minute"), db_table="kpi2", mode="overwrite")
+        df=calculate_kpi2(data, *config.INTERVAL_5_MINS), db_table="kpi2", mode="overwrite")
     write_jdbc(
-        df=calculate_kpi2(data, "1 hour", "1-hour"), db_table="kpi2", mode="append")
+        df=calculate_kpi2(data, *config.INTERVAL_1_HOUR), db_table="kpi2", mode="append")
 
 
 def read_csv(folder_path):
@@ -47,8 +47,7 @@ def read_csv(folder_path):
         .withColumn("total_bytes", df.bytes_downlink + df.bytes_uplink)
     )
 
-    # df.show(n=10, truncate=False, vertical=False)
-
+    # Return
     return df_extended
 
 

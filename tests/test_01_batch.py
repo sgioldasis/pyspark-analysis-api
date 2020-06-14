@@ -10,32 +10,8 @@ from etl.spark import get_spark
 import config
 from collections import Counter
 
-KPI1_COLUMNS = [
-    "interval_start_timestamp",
-    "interval_end_timestamp",
-    "service_id",
-    "total_bytes",
-    "interval"
-]
 
-KPI2_COLUMNS = [
-    "interval_start_timestamp",
-    "interval_end_timestamp",
-    "cell_id",
-    "number_of_unique_users",
-    "interval"
-]
-
-DURATION_5_MINS = "5 minutes"
-TAG_5_MINS = "5-minute"
-
-DURATION_1_HOUR = "1 hour"
-TAG_1_HOUR = "1-hour"
-
-INTERVAL_5_MINS = (DURATION_5_MINS, TAG_5_MINS)
-INTERVAL_1_HOUR = (DURATION_1_HOUR, TAG_1_HOUR)
-
-
+# O(n) list comparizon ignoring order
 def same(s, t):
     return Counter(s) == Counter(t)
 
@@ -72,69 +48,59 @@ def test_read_files():
 def test_kpi1_five_minutes():
 
     component = calculate_kpi1
-    interval_duration, interval_tag = INTERVAL_5_MINS
-    expected_columns = KPI1_COLUMNS
+    interval = config.INTERVAL_5_MINS
+    expected_columns = config.KPI1_COLUMNS
     expected_data = [
-        (1488355200000, 1488355500000, 1, 16100, TAG_5_MINS),
-        (1488355200000, 1488355500000, 3, 11500, TAG_5_MINS),
-        (1488355200000, 1488355500000, 2, 9260, TAG_5_MINS),
-        (1488355500000, 1488355800000, 1, 16100, TAG_5_MINS),
-        (1488355500000, 1488355800000, 3, 11500, TAG_5_MINS),
-        (1488355500000, 1488355800000, 2, 9260, TAG_5_MINS)
+        (1488355200000, 1488355500000, 1, 16100, config.TAG_5_MINS),
+        (1488355200000, 1488355500000, 3, 11500, config.TAG_5_MINS),
+        (1488355200000, 1488355500000, 2, 9260, config.TAG_5_MINS),
+        (1488355500000, 1488355800000, 1, 16100, config.TAG_5_MINS),
+        (1488355500000, 1488355800000, 3, 11500, config.TAG_5_MINS),
+        (1488355500000, 1488355800000, 2, 9260, config.TAG_5_MINS)
     ]
-
-    check(component, interval_duration, interval_tag,
-          expected_data, expected_columns)
+    check(component, *interval, expected_data, expected_columns)
 
 
 def test_kpi1_one_hour():
 
     component = calculate_kpi1
-    interval_duration, interval_tag = INTERVAL_1_HOUR
-    expected_columns = KPI1_COLUMNS
+    interval = config.INTERVAL_1_HOUR
+    expected_columns = config.KPI1_COLUMNS
     expected_data = [
-        (1488355200000, 1488358800000, 1, 32200, TAG_1_HOUR),
-        (1488355200000, 1488358800000, 3, 23000, TAG_1_HOUR),
-        (1488355200000, 1488358800000, 2, 18520, TAG_1_HOUR)
+        (1488355200000, 1488358800000, 1, 32200, config.TAG_1_HOUR),
+        (1488355200000, 1488358800000, 3, 23000, config.TAG_1_HOUR),
+        (1488355200000, 1488358800000, 2, 18520, config.TAG_1_HOUR)
     ]
-
-    check(component, interval_duration, interval_tag,
-          expected_data, expected_columns)
+    check(component, *interval, expected_data, expected_columns)
 
 
 def test_kpi2_five_minutes():
 
     component = calculate_kpi2
-    interval_duration, interval_tag = INTERVAL_5_MINS
-    expected_columns = KPI2_COLUMNS
-
+    interval = config.INTERVAL_5_MINS
+    expected_columns = config.KPI2_COLUMNS
     expected_data = [
-        (1488355200000, 1488355500000, 1001, 4, TAG_5_MINS),
-        (1488355200000, 1488355500000, 5005, 3, TAG_5_MINS),
-        (1488355200000, 1488355500000, 1000, 3, TAG_5_MINS),
-        (1488355500000, 1488355800000, 1001, 4, TAG_5_MINS),
-        (1488355500000, 1488355800000, 5005, 3, TAG_5_MINS),
-        (1488355500000, 1488355800000, 1000, 3, TAG_5_MINS)
+        (1488355200000, 1488355500000, 1001, 4, config.TAG_5_MINS),
+        (1488355200000, 1488355500000, 5005, 3, config.TAG_5_MINS),
+        (1488355200000, 1488355500000, 1000, 3, config.TAG_5_MINS),
+        (1488355500000, 1488355800000, 1001, 4, config.TAG_5_MINS),
+        (1488355500000, 1488355800000, 5005, 3, config.TAG_5_MINS),
+        (1488355500000, 1488355800000, 1000, 3, config.TAG_5_MINS)
     ]
-
-    check(component, interval_duration, interval_tag,
-          expected_data, expected_columns)
+    check(component, *interval, expected_data, expected_columns)
 
 
 def test_kpi2_one_hour():
 
     component = calculate_kpi2
-    interval_duration, interval_tag = INTERVAL_1_HOUR
-    expected_columns = KPI2_COLUMNS
-
+    interval = config.INTERVAL_1_HOUR
+    expected_columns = config.KPI2_COLUMNS
     expected_data = [
-        (1488355200000, 1488358800000, 1001, 4, TAG_1_HOUR),
-        (1488355200000, 1488358800000, 5005, 3, TAG_1_HOUR),
-        (1488355200000, 1488358800000, 1000, 3, TAG_1_HOUR)
+        (1488355200000, 1488358800000, 1001, 4, config.TAG_1_HOUR),
+        (1488355200000, 1488358800000, 5005, 3, config.TAG_1_HOUR),
+        (1488355200000, 1488358800000, 1000, 3, config.TAG_1_HOUR)
     ]
-
-    check(component, interval_duration, interval_tag,
-          expected_data, expected_columns)
+    check(component, *interval, expected_data, expected_columns)
 
 
 def test_run_pipeline():
@@ -143,18 +109,18 @@ def test_run_pipeline():
     run_pipeline()
 
     # Check KPI1
-    expected_table_name = "kpi1"
-    expected_columns = KPI1_COLUMNS
+    expected_table_name = config.KPI1_TABLE_NAME
+    expected_columns = config.KPI1_COLUMNS
     expected_data = [
-        (1488355200000, 1488355500000, 1, 16100, TAG_5_MINS),
-        (1488355200000, 1488355500000, 3, 11500, TAG_5_MINS),
-        (1488355200000, 1488355500000, 2, 9260, TAG_5_MINS),
-        (1488355500000, 1488355800000, 1, 16100, TAG_5_MINS),
-        (1488355500000, 1488355800000, 3, 11500, TAG_5_MINS),
-        (1488355500000, 1488355800000, 2, 9260, TAG_5_MINS),
-        (1488355200000, 1488358800000, 1, 32200, TAG_1_HOUR),
-        (1488355200000, 1488358800000, 3, 23000, TAG_1_HOUR),
-        (1488355200000, 1488358800000, 2, 18520, TAG_1_HOUR)
+        (1488355200000, 1488355500000, 1, 16100, config.TAG_5_MINS),
+        (1488355200000, 1488355500000, 3, 11500, config.TAG_5_MINS),
+        (1488355200000, 1488355500000, 2, 9260, config.TAG_5_MINS),
+        (1488355500000, 1488355800000, 1, 16100, config.TAG_5_MINS),
+        (1488355500000, 1488355800000, 3, 11500, config.TAG_5_MINS),
+        (1488355500000, 1488355800000, 2, 9260, config.TAG_5_MINS),
+        (1488355200000, 1488358800000, 1, 32200, config.TAG_1_HOUR),
+        (1488355200000, 1488358800000, 3, 23000, config.TAG_1_HOUR),
+        (1488355200000, 1488358800000, 2, 18520, config.TAG_1_HOUR)
     ]
     expected_df = get_spark().createDataFrame(expected_data, expected_columns)
 
@@ -167,18 +133,18 @@ def test_run_pipeline():
     assert actual_df.collect() == expected_df.collect()
 
     # Check KPI2
-    expected_table_name = "kpi2"
-    expected_columns = KPI2_COLUMNS
+    expected_table_name = config.KPI2_TABLE_NAME
+    expected_columns = config.KPI2_COLUMNS
     expected_data = [
-        (1488355200000, 1488355500000, 1001, 4, TAG_5_MINS),
-        (1488355200000, 1488355500000, 5005, 3, TAG_5_MINS),
-        (1488355200000, 1488355500000, 1000, 3, TAG_5_MINS),
-        (1488355500000, 1488355800000, 1001, 4, TAG_5_MINS),
-        (1488355500000, 1488355800000, 5005, 3, TAG_5_MINS),
-        (1488355500000, 1488355800000, 1000, 3, TAG_5_MINS),
-        (1488355200000, 1488358800000, 1001, 4, TAG_1_HOUR),
-        (1488355200000, 1488358800000, 5005, 3, TAG_1_HOUR),
-        (1488355200000, 1488358800000, 1000, 3, TAG_1_HOUR)
+        (1488355200000, 1488355500000, 1001, 4, config.TAG_5_MINS),
+        (1488355200000, 1488355500000, 5005, 3, config.TAG_5_MINS),
+        (1488355200000, 1488355500000, 1000, 3, config.TAG_5_MINS),
+        (1488355500000, 1488355800000, 1001, 4, config.TAG_5_MINS),
+        (1488355500000, 1488355800000, 5005, 3, config.TAG_5_MINS),
+        (1488355500000, 1488355800000, 1000, 3, config.TAG_5_MINS),
+        (1488355200000, 1488358800000, 1001, 4, config.TAG_1_HOUR),
+        (1488355200000, 1488358800000, 5005, 3, config.TAG_1_HOUR),
+        (1488355200000, 1488358800000, 1000, 3, config.TAG_1_HOUR)
     ]
     expected_df = get_spark().createDataFrame(expected_data, expected_columns)
 
