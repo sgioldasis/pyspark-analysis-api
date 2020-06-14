@@ -1,3 +1,7 @@
+"""
+This module provides the API functionality
+"""
+
 from flask import Flask
 from flask_mysqldb import MySQL
 import json
@@ -19,6 +23,9 @@ mysql = MySQL(app)
 
 
 def sql_condition():
+    """
+    Returns the SQL condition corresponding to the request query string
+    """
 
     # Get parameters from query string
     args = request.args
@@ -52,6 +59,9 @@ def sql_condition():
 
 
 def db_results(sql):
+    """
+    Runs the provided sql statement, and fetches the results in JSON format
+    """
 
     # Execute the SQL on the database and fetch the results
     cur = mysql.connection.cursor()
@@ -73,6 +83,9 @@ def db_results(sql):
 
 @app.route('/kpi1/', methods=['GET'])
 def get_kpi1():
+    """
+    Queries kpi1 database table and returns results in JSON format
+    """
 
     # Construct the SQL statement to run on the database
     sql = f'''
@@ -94,6 +107,9 @@ def get_kpi1():
 
 @app.route('/kpi2/', methods=['GET'])
 def get_kpi2():
+    """
+    Queries kpi2 database table and returns results in JSON format
+    """
 
     # Construct the SQL statement to run on the database
     sql = f'''
