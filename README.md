@@ -13,6 +13,11 @@ The purpose of the application is to calculate user and network KPIs (Key Perfor
 
 The KPIs above are calculated for all 5-minute intervals within the day, but also for all 1-hour intervals of the day. So, for each 5-minute KPI there are calculations for the intervals: 00:00 – 00:05, 00:05 – 00:10, 00:10-00:15, etc. For each 1-hour KPI, this is done for: 00:00 – 01:00, 01:00 – 02:00 etc. The results are stored in one database table for each KPI.
 
+## High Level System Design
+
+This is the High Level System Design:
+![Kiku](doc/HighLevelSystemDesign.svg)
+
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
