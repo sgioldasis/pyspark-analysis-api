@@ -39,7 +39,7 @@ contains the following query string parameters:
 - **to** (value = 2017-03-01_10:05:00)
 - **interval** (value = 5-minute)
 
-You can use any combination the above parameters to get the desired range of records from the database. You can also use the endpoint without any parameters to get the full database contents for the particular KPI.
+You can use any combination the above parameters to get the desired range of records from the database. You can also use the endpoint without a query string to get the full database contents for the particular KPI.
 
 The results are returned in a JSON list with different fields depending on the KPI. You can find examples below.
 
