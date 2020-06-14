@@ -45,7 +45,7 @@ The results are returned in a JSON list with different fields depending on the K
 
 **Example results for KPI1:**
 
-````json
+```json
 [
   {
     "interval_start_timestamp": "2017-03-01 10:00:00",
@@ -68,7 +68,8 @@ The results are returned in a JSON list with different fields depending on the K
     "total_bytes": 9260,
     "interval": "5-minute"
   }
-]```
+]
+```
 
 **Example results for KPI2:**
 
@@ -96,7 +97,7 @@ The results are returned in a JSON list with different fields depending on the K
     "interval": "5-minute"
   }
 ]
-````
+```
 
 ## Prerequisites
 
