@@ -1,40 +1,23 @@
 import pyspark.sql.functions as F
-from pyspark.sql.types import StructType, StructField
-from pyspark.sql.types import IntegerType, LongType
+from pyspark.sql.types import StructType, StructField, IntegerType, LongType
 from pyspark.sql.window import Window
-from pyspark.sql import SparkSession
-from functools import lru_cache
 import config
+from etl.spark import get_spark
 
 
 def run_pipeline():
-    spark = get_spark()
-    data = read_data(spark, config.INPUT_PATH)
+    data = read_csv(config.INPUT_PATH)
     write_jdbc(
         df=calculate_kpi1(data, "5 minutes", "5-minute"), db_table="kpi1", mode="overwrite")
     write_jdbc(
-        df=calculate_kpi1(data, "1 hour", "1-hour"), db_table="kpi1")
+        df=calculate_kpi1(data, "1 hour", "1-hour"), db_table="kpi1", mode="append")
     write_jdbc(
         df=calculate_kpi2(data, "5 minutes", "5-minute"), db_table="kpi2", mode="overwrite")
     write_jdbc(
-        df=calculate_kpi2(data, "1 hour", "1-hour"), db_table="kpi2")
+        df=calculate_kpi2(data, "1 hour", "1-hour"), db_table="kpi2", mode="append")
 
 
-@lru_cache(maxsize=None)
-def get_spark():
-    spark = (
-        SparkSession.builder
-        .master("local")
-        .appName("etl_batch")
-        .config("spark.driver.extraClassPath", config.JDBC_JAR)
-        .getOrCreate()
-    )
-
-    spark.sparkContext.setLogLevel("ERROR")
-    return spark
-
-
-def read_data(spark, folder_path):
+def read_csv(folder_path):
     # Define expected schema
     schema = StructType(
         [
@@ -50,7 +33,7 @@ def read_data(spark, folder_path):
 
     # Read text files into dataframe
     df = (
-        spark.read.format("com.databricks.spark.csv")
+        get_spark().read.format("com.databricks.spark.csv")
         .schema(schema)
         .option("header", "true")
         .load(folder_path)
@@ -69,7 +52,7 @@ def read_data(spark, folder_path):
     return df_extended
 
 
-def calculate_kpi1(df_input, interval_duration, interval_description):
+def calculate_kpi1(df_input, interval_duration, interval_tag):
     return (
         df_input
         .groupBy("service_id", F.window("interval_start", interval_duration))
@@ -86,12 +69,12 @@ def calculate_kpi1(df_input, interval_duration, interval_description):
             "cast(window.end as long)*1000 as interval_end_timestamp",
             "service_id",
             "total_bytes",
-            f"'{interval_description}' as interval"
+            f"'{interval_tag}' as interval"
         )
     )
 
 
-def calculate_kpi2(df_input, interval_duration, interval_description):
+def calculate_kpi2(df_input, interval_duration, interval_tag):
     return (
         df_input
         .groupBy("cell_id", F.window("interval_start", interval_duration))
@@ -108,7 +91,7 @@ def calculate_kpi2(df_input, interval_duration, interval_description):
             "cast(window.end as long)*1000 as interval_end_timestamp",
             "cell_id",
             "number_of_unique_users",
-            f"'{interval_description}' as interval"
+            f"'{interval_tag}' as interval"
         )
     )
 
