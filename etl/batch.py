@@ -1,3 +1,7 @@
+"""
+This module provides the ETL batch pipeline and its individual components
+"""
+
 import pyspark.sql.functions as F
 from pyspark.sql.types import StructType, StructField, IntegerType, LongType
 from pyspark.sql.window import Window
@@ -6,6 +10,9 @@ from etl.spark import get_spark
 
 
 def run_pipeline():
+    """
+    Runs all components of the ETL pipeline in the correct order
+    """
     data = read_csv(config.INPUT_PATH)
     write_jdbc(
         df=calculate_kpi1(data, *config.INTERVAL_5_MINS), db_table="kpi1", mode="overwrite")
@@ -18,6 +25,27 @@ def run_pipeline():
 
 
 def read_csv(folder_path):
+    """
+    Reads csv files and returns a dataframe.
+
+    Reads all the csv files in the provided path into a dataframe using a
+    specific schema. It then extends the dataframe with the following columns:
+
+    "interval_start": Convert interval_start_timestamp to timestamp
+    "interval_end"  : Convert interval_end_timestamp to timestamp
+    "total_bytes"   : bytes_downlink + bytes_uplink
+
+    Parameters
+    ----------
+    folder_path : str
+        The filesystem path of the csv files
+
+    Returns
+    -------
+    dataframe
+        A dataframe with the csv columns plus the additional columns
+    """
+
     # Define expected schema
     schema = StructType(
         [
@@ -52,6 +80,33 @@ def read_csv(folder_path):
 
 
 def calculate_kpi1(df_input, interval_duration, interval_tag):
+    """
+    Calculates KPI1: Top 3 services by traffic volume
+
+    The top 3 services (as identified by service_id) which generated the largest 
+    traffic volume in terms of bytes (downlink_bytes + uplink_bytes) for the
+    interval
+
+    Parameters
+    ----------
+    df_input : dataframe
+        A dataframe containing the raw data
+    interval_duration : str
+        A duration string (eg. "5 minutes") for the desired breakdown interval
+    interval_tag : str
+        A string which will be used for the "interval" column of the ouput
+
+    Returns
+    -------
+    dataframe
+        A dataframe with the top 3 services for each interval 
+
+        Columns:
+        "interval_start_timestamp"
+        "interval_end_timestamp"
+        "service_id"
+        "total_bytes"
+    """
     return (
         df_input
         .groupBy("service_id", F.window("interval_start", interval_duration))
@@ -74,6 +129,32 @@ def calculate_kpi1(df_input, interval_duration, interval_tag):
 
 
 def calculate_kpi2(df_input, interval_duration, interval_tag):
+    """
+    Calculates KPI2: Top 3 cells by number of unique users
+
+    The top 3 cells (as identified by cell_id) which served the highest number 
+    of unique users (as identified by msisdn) for the interval
+
+    Parameters
+    ----------
+    df_input : dataframe
+        A dataframe containing the raw data
+    interval_duration : str
+        A duration string (eg. "5 minutes") for the desired breakdown interval
+    interval_tag : str
+        A string which will be used for the "interval" column of the ouput
+
+    Returns
+    -------
+    dataframe
+        A dataframe with the top 3 cells for each interval. 
+
+        Columns:
+        "interval_start_timestamp"
+        "interval_end_timestamp"
+        "cell_id"
+        "number_of_unique_users"
+    """
     return (
         df_input
         .groupBy("cell_id", F.window("interval_start", interval_duration))
@@ -102,6 +183,9 @@ def write_jdbc(df,
                password=config.PASSWORD,
                mode="append"
                ):
+    """
+    Writes a dataframe to a JDBC database using the provided parameters
+    """
     df.write.format("jdbc") \
         .mode(mode) \
         .option("url", jdbc_url) \
