@@ -1,5 +1,9 @@
 """
-This module provides the ETL batch pipeline and its individual components
+This module provides the ETL batch pipeline and its individual components.
+
+The ETL batch pipeline:
+  - Performs the KPI calculations based on the input raw files 
+  - Stores the results in the database
 """
 
 import pyspark.sql.functions as F
