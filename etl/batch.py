@@ -13,15 +13,33 @@ def run_pipeline():
     """
     Runs all components of the ETL pipeline in the correct order
     """
-    data = read_csv(config.INPUT_PATH)
+
+    # Read input files
+    input_df = read_csv(config.INPUT_PATH)
+
+    # KPI1: Calculate and write to database
     write_jdbc(
-        df=calculate_kpi1(data, *config.INTERVAL_5_MINS), db_table="kpi1", mode="overwrite")
+        df=calculate_kpi1(input_df, *config.INTERVAL_5_MINS),
+        db_table=config.KPI1_TABLE_NAME,
+        mode="overwrite"
+    )
     write_jdbc(
-        df=calculate_kpi1(data, *config.INTERVAL_1_HOUR), db_table="kpi1", mode="append")
+        df=calculate_kpi1(input_df, *config.INTERVAL_1_HOUR),
+        db_table=config.KPI1_TABLE_NAME,
+        mode="append"
+    )
+
+    # KPI2: Calculate and write to database
     write_jdbc(
-        df=calculate_kpi2(data, *config.INTERVAL_5_MINS), db_table="kpi2", mode="overwrite")
+        df=calculate_kpi2(input_df, *config.INTERVAL_5_MINS),
+        db_table=config.KPI2_TABLE_NAME,
+        mode="overwrite"
+    )
     write_jdbc(
-        df=calculate_kpi2(data, *config.INTERVAL_1_HOUR), db_table="kpi2", mode="append")
+        df=calculate_kpi2(input_df, *config.INTERVAL_1_HOUR),
+        db_table=config.KPI2_TABLE_NAME,
+        mode="append"
+    )
 
 
 def read_csv(folder_path):
