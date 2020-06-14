@@ -19,6 +19,85 @@ In the image below you can see the design of the system on a high level:
 
 ![HighLevelSystemDesign](doc/HighLevelSystemDesign.svg)
 
+## API Design
+
+The API consists of two resources (kpi1, kpi2).
+
+Each resource corresponds to an endpoint (eg. http://127.0.0.1:5000/kpi1 and http://127.0.0.1:5000/kpi2)
+
+Each endpoint accepts GET requests with optional query string parameters.
+
+Query string parameters appear after a question mark (?) in the endpoint. The question mark followed by the parameters and their values is referred to as the "query string". In the query string, each parameter is listed one right after the other with an ampersand (&) separating them. The order of the query string parameters does not matter.
+
+For example:
+
+http://127.0.0.1:5000/kpi1/?from=2017-03-01_10:00:00&to=2017-03-01_10:05:00&interval=5-minute
+
+contains the following query string parameters:
+
+- **from** (value = 2017-03-01_10:00:00)
+- **to** (value = 2017-03-01_10:05:00)
+- **interval** (value = 5-minute)
+
+You can use any combination the above parameters to get the desired range of records from the database. You can also use the endpoint without any parameters to get the full database contents for the particular KPI.
+
+The results are returned in a JSON list with different fields depending on the KPI. You can find examples below.
+
+**Example results for KPI1:**
+
+````json
+[
+  {
+    "interval_start_timestamp": "2017-03-01 10:00:00",
+    "interval_end_timestamp": "2017-03-01 10:05:00",
+    "service_id": 1,
+    "total_bytes": 16100,
+    "interval": "5-minute"
+  },
+  {
+    "interval_start_timestamp": "2017-03-01 10:00:00",
+    "interval_end_timestamp": "2017-03-01 10:05:00",
+    "service_id": 3,
+    "total_bytes": 11500,
+    "interval": "5-minute"
+  },
+  {
+    "interval_start_timestamp": "2017-03-01 10:00:00",
+    "interval_end_timestamp": "2017-03-01 10:05:00",
+    "service_id": 2,
+    "total_bytes": 9260,
+    "interval": "5-minute"
+  }
+]```
+
+**Example results for KPI2:**
+
+```json
+[
+  {
+    "interval_start_timestamp": "2017-03-01 10:00:00",
+    "interval_end_timestamp": "2017-03-01 10:05:00",
+    "cell_id": 1001,
+    "number_of_unique_users": 4,
+    "interval": "5-minute"
+  },
+  {
+    "interval_start_timestamp": "2017-03-01 10:00:00",
+    "interval_end_timestamp": "2017-03-01 10:05:00",
+    "cell_id": 5005,
+    "number_of_unique_users": 3,
+    "interval": "5-minute"
+  },
+  {
+    "interval_start_timestamp": "2017-03-01 10:00:00",
+    "interval_end_timestamp": "2017-03-01 10:05:00",
+    "cell_id": 1000,
+    "number_of_unique_users": 3,
+    "interval": "5-minute"
+  }
+]
+````
+
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
